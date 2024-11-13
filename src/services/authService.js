@@ -11,8 +11,15 @@ const signup = async (formData) => {
       if (res.data.error) {
         throw new Error(res.data.error);
       };
+
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
   
-      return res.data;
+        const user = JSON.parse(atob(res.data.token.split('.')[1]));
+        return user;
+      }
+      
+      return res.data
     } catch (err) {
       console.log(err);
       throw err;
@@ -28,6 +35,8 @@ const signin = async (user) => {
     }
 
     if (res.data.token) {
+      localStorage.setItem('token', res.data.token);
+
       const user = JSON.parse(atob(res.data.token.split('.')[1]));
       return user;
     }
@@ -37,7 +46,22 @@ const signin = async (user) => {
   }
 };
 
+const getUser = () => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  const user = JSON.parse(atob(token.split('.')[1]));
+  return user;
+}
+
+const signout = () => {
+  localStorage.removeItem('token');
+};
+
+
 export {
   signup,
-  signin
+  signin,
+  getUser,
+  signout
 };
