@@ -8,8 +8,8 @@ const signup = async (formData) => {
     try {
       const res = await axios.post(`${BACKEND_URL}/users/signup`, formData)
   
-      if (res.err) {
-        throw new Error(res.err);
+      if (res.data.error) {
+        throw new Error(res.data.error);
       };
   
       return res.data;
@@ -19,22 +19,25 @@ const signup = async (formData) => {
     }
   };
 
-//      {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(formData),
-//     };
-//     const json = await res.json();
-//     if (json.err) {
-//       throw new Error(json.err);
-//     }
-//     return json;
-//   } catch (err) {
-//     console.log(err);
-//     throw err;
-//   }
-// };
+const signin = async (user) => {
+  try {
+    const res = await axios.post(`${BACKEND_URL}/users/signin`, user);
+
+    if (res.data.error) {
+      throw new Error(res.data.error);
+    }
+
+    if (res.data.token) {
+      const user = JSON.parse(atob(res.data.token.split('.')[1]));
+      return user;
+    }
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
 
 export {
   signup,
+  signin
 };
